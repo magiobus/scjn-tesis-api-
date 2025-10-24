@@ -1,0 +1,17 @@
+node_modules/
+*.log
+.DS_Store
+.env
+coverage/
+dist/
+
+# Archivos temporales
+demo.js
+*.tmp
+.vscode/
+.idea/
+
+# NPM
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
