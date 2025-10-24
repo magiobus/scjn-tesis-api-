@@ -5,6 +5,34 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/),
 y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.0.1] - 2025-10-24
+
+### 🐛 Correcciones Críticas
+- **FIXED**: `getTesis()` ahora funciona correctamente
+  - El endpoint GET `/tesis/{id}` no existe en el API de SCJN
+  - Reimplementado para usar búsqueda POST con filtro por IUS
+  - Ahora retorna datos completos de la tesis correctamente
+- **FIXED**: `totalElements` siempre era `undefined`
+  - El API retorna `total` en lugar de `totalElements`
+  - Agregado mapeo de normalización en `search()` para mantener compatibilidad
+- **FIXED**: Ejemplo `advanced-filters.js` usaba `id` en lugar de `ius`
+  - Corregido para usar el número IUS correcto
+
+### 📖 Documentación Mejorada
+- Agregada sección crítica sobre diferencia entre `id` e `ius` en README
+- Mejorado JSDoc en `SCJNClient.js` con advertencias y ejemplos
+- Mejorado JSDoc en `endpoints/tesis.js` con explicación detallada
+- Agregado archivo `CLAUDE.md` para Claude Code
+- Todos los ejemplos ahora tienen comentarios aclaratorios sobre IUS vs ID
+
+### ✅ Testing
+- Test success rate mejorado de 60% a 100% (5/5 tests passing)
+- Todos los tests básicos ahora pasan correctamente
+
+### 🔧 Mejoras Técnicas
+- Agregado `logs/` al `.gitignore`
+- Normalización de respuestas del API para consistencia
+
 ## [1.0.0] - 2025-01-23
 
 ### ✨ Añadido

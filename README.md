@@ -75,17 +75,28 @@ const results = await client.search({
 }
 ```
 
-#### `getTesis(id)`
+#### `getTesis(ius)`
 
-Obtiene una tesis por su ID.
+Obtiene una tesis por su número IUS.
+
+**⚠️ IMPORTANTE**: Este método requiere el número IUS, NO el document ID.
 
 ```javascript
-const tesis = await client.getTesis('Aa88D5oB8-0TpTce0ffR');
+// ✅ CORRECTO: Usar número IUS
+const tesis = await client.getTesis(2031337);
 
 console.log(tesis.rubro);
 console.log(tesis.ius);
 console.log(tesis.epocaAbr);
+
+// También puedes obtener el IUS de una búsqueda:
+const results = await client.search({ size: 1 });
+const tesis = await client.getTesis(results.documents[0].ius);
 ```
+
+**Diferencia entre `id` e `ius`:**
+- **`id`**: Document ID interno de Elasticsearch (string, ej: "Aa88D5oB8-0TpTce0ffR") ❌ No usar con getTesis()
+- **`ius`**: Número público de tesis (número, ej: 2031337) ✅ Usar con getTesis()
 
 #### `getAllTesisIds(filters, options)`
 
@@ -106,8 +117,15 @@ const allIds = await client.getAllTesisIds(
   }
 );
 
-// Retorna array de:
-// [{ id: '...', ius: 2031337, rubro: '...' }, ...]
+// Retorna array de objetos con:
+// [{
+//   id: 'Aa88D5oB8-0TpTce0ffR',  // Document ID (para referencia)
+//   ius: 2031337,                 // Número IUS (usar con getTesis)
+//   rubro: 'AMPARO DIRECTO...'    // Título de la tesis
+// }, ...]
+
+// Para obtener detalles completos de una tesis:
+const detalle = await client.getTesis(allIds[0].ius);  // ✅ Usar el campo ius
 ```
 
 #### `healthCheck()`

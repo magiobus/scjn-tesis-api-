@@ -89,7 +89,15 @@ async function search(httpClient, options = {}) {
 
   const url = `${ENDPOINTS.SEARCH}?size=${size}&page=${page}`;
 
-  return httpClient.post(url, payload);
+  const response = await httpClient.post(url, payload);
+
+  // Normalizar respuesta: mapear 'total' a 'totalElements' y 'totalPage' a 'totalPages'
+  // para mantener compatibilidad con la API documentada
+  return {
+    ...response,
+    totalElements: response.total || 0,
+    totalPages: response.totalPage || 0
+  };
 }
 
 module.exports = {

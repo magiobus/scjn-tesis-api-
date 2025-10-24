@@ -36,14 +36,14 @@ async function main() {
     });
     console.log(`   Encontradas: ${jurisprudencias.totalElements} jurisprudencias\n`);
 
-    // Ejemplo 4: Obtener tesis específica por ID
-    console.log('4️⃣  Obtener tesis específica (IUS 2031337)');
+    // Ejemplo 4: Obtener tesis específica por IUS
+    console.log('4️⃣  Obtener tesis específica por IUS');
 
-    // Primero buscar una tesis para obtener su ID
+    // Primero buscar una tesis para obtener su IUS
     const searchResult = await client.search({ size: 1 });
     if (searchResult.documents && searchResult.documents.length > 0) {
       const firstDoc = searchResult.documents[0];
-      const tesisDetail = await client.getTesis(firstDoc.id);
+      const tesisDetail = await client.getTesis(firstDoc.ius);
 
       console.log(`   Rubro: ${tesisDetail.rubro}`);
       console.log(`   IUS: ${tesisDetail.ius}`);

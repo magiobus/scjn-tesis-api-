@@ -60,29 +60,40 @@ class SCJNClient {
   }
 
   /**
-   * Obtiene una tesis por su ID
-   * @param {string|number} id - ID de la tesis
+   * Obtiene una tesis por su número IUS
+   *
+   * IMPORTANTE: Este método requiere el número IUS (ej: 2031337), NO el document ID.
+   * Los documentos tienen dos identificadores:
+   * - `id`: Document ID de Elasticsearch (string, ej: "Aa88D5oB8-0TpTce0ffR")
+   * - `ius`: Número público de tesis (número, ej: 2031337) ← usar este
+   *
+   * @param {number} ius - Número IUS de la tesis (NO el document ID)
    * @param {Object} options - Opciones adicionales
    * @returns {Promise<Object>} Datos completos de la tesis
    *
    * @example
-   * const tesis = await client.getTesis(159805);
+   * // Correcto: usar el número IUS
+   * const tesis = await client.getTesis(2031337);
+   *
+   * // O obtenerlo de una búsqueda:
+   * const results = await client.search({ size: 1 });
+   * const tesis = await client.getTesis(results.documents[0].ius);
    */
-  async getTesis(id, options = {}) {
-    return getTesis(this.httpClient, id, options);
+  async getTesis(ius, options = {}) {
+    return getTesis(this.httpClient, ius, options);
   }
 
   /**
-   * Obtiene múltiples tesis por sus IDs
-   * @param {Array<string|number>} ids - Array de IDs
+   * Obtiene múltiples tesis por sus números IUS
+   * @param {Array<number>} iusNumbers - Array de números IUS (NO document IDs)
    * @param {Object} options - Opciones adicionales
    * @returns {Promise<Array>} Array de tesis
    *
    * @example
-   * const tesisList = await client.getMultipleTesis([159805, 159806]);
+   * const tesisList = await client.getMultipleTesis([2031337, 2031338]);
    */
-  async getMultipleTesis(ids, options = {}) {
-    return getMultipleTesis(this.httpClient, ids, options);
+  async getMultipleTesis(iusNumbers, options = {}) {
+    return getMultipleTesis(this.httpClient, iusNumbers, options);
   }
 
   /**
@@ -98,16 +109,22 @@ class SCJNClient {
   }
 
   /**
-   * Obtiene todos los IDs de tesis según filtros
+   * Obtiene todos los IDs de tesis según filtros (con paginación automática)
+   *
+   * IMPORTANTE: Retorna objetos con dos identificadores:
+   * - `id`: Document ID de Elasticsearch (para referencia interna)
+   * - `ius`: Número público de tesis (usar este con getTesis())
+   * - `rubro`: Título de la tesis
+   *
    * @param {Object} filters - Filtros de búsqueda (mismo formato que search())
    * @param {Object} options - Opciones de paginación
    * @param {Function} options.onProgress - Callback (current, total, page, totalPages)
    * @param {number} options.maxConcurrent - Requests concurrentes (default: 3)
    * @param {number} options.pageSize - Tamaño de página (default: 100)
-   * @returns {Promise<Array>} Array de {id, ius, rubro}
+   * @returns {Promise<Array>} Array de objetos {id, ius, rubro}
    *
    * @example
-   * const allIds = await client.getAllTesisIds(
+   * const allTesis = await client.getAllTesisIds(
    *   { epocas: ['12a'] },
    *   {
    *     onProgress: (current, total) => {
@@ -115,6 +132,9 @@ class SCJNClient {
    *     }
    *   }
    * );
+   *
+   * // Para obtener detalles de una tesis, usar el campo `ius`:
+   * const detalle = await client.getTesis(allTesis[0].ius);
    */
   async getAllTesisIds(filters = {}, options = {}) {
     return this.paginator.getAllTesisIds(filters, options);
